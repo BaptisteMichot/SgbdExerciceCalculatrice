@@ -17,6 +17,8 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private String operation;
+    private double total = 0;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -34,29 +36,25 @@ public class App extends Application {
             }
         });
 
-        //Boutons 0 à 9
+        //Création des boutons
         Button[] chiffres = new Button[10];
         for(int i=0; i<=9; i++){
 
             chiffres[i] = new Button(String.valueOf(i));
-            int chiffre = i;
             chiffres[i].setStyle("-fx-font-size: 35px;");
             chiffres[i].setPrefWidth(100);
             chiffres[i].setPrefHeight(100);
-
-            chiffres[i].setOnAction(new EventHandler<ActionEvent>(){
-                @Override
-                public void handle(ActionEvent event) {
-                    affichage.appendText(String.valueOf(chiffre));
-                }
-            });
         }
 
-        //Boutons d'opérations
         Button virgule = new Button(".");
         virgule.setStyle("-fx-font-size: 35px;");
         virgule.setPrefWidth(100);
         virgule.setPrefHeight(100);
+
+        Button supprimer = new Button("←");
+        supprimer.setStyle("-fx-font-size: 35px;");
+        supprimer.setPrefWidth(100);
+        supprimer.setPrefHeight(100);
 
         Button plus = new Button("+");
         plus.setStyle("-fx-font-size: 35px;");
@@ -83,18 +81,12 @@ public class App extends Application {
         egal.setPrefWidth(205);
         egal.setPrefHeight(100);
 
-        Button supprimer = new Button("←");
-        supprimer.setStyle("-fx-font-size: 35px;");
-        supprimer.setPrefWidth(100);
-        supprimer.setPrefHeight(100);
-
         Button ac = new Button("AC");
         ac.setStyle("-fx-font-size: 35px;");
         ac.setPrefWidth(205);
         ac.setPrefHeight(100);
         
 
-        
         //Placement des boutons dans la grille
         GridPane grid = new GridPane();
         grid.setHgap(5);
@@ -116,17 +108,118 @@ public class App extends Application {
         grid.add(virgule,2,3);
         grid.add(supprimer,0,3);
 
-
-        
+        //Gestion de l'affichage dans la fenêtre
         HBox hBoxBas = new HBox(5, ac, egal);
         VBox vBox = new VBox(5, affichage, grid, hBoxBas);
         HBox hBox = new HBox(5, vBox);
         vBox.setAlignment(Pos.CENTER);
         hBox.setAlignment(Pos.CENTER);
-        
         scene = new Scene(hBox, 500, 650);
         stage.setScene(scene);
         stage.show();
+
+
+        //Préparation des boutons
+        for(int i=0; i<=9; i++){
+            int chiffre = i;
+            chiffres[i].setOnAction(new EventHandler<ActionEvent>(){
+                @Override
+                public void handle(ActionEvent event) {
+                    affichage.appendText(String.valueOf(chiffre));
+                }
+            });
+        }
+
+        virgule.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                affichage.appendText(virgule.getText());
+            }
+        });
+
+        supprimer.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                if(!affichage.getText().isEmpty()){
+                    affichage.setText(affichage.getText().substring(0, affichage.getText().length() - 1));
+                }
+            }
+        });
+
+        plus.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                if(!affichage.getText().isEmpty()){
+                    operation = "+";
+                    total += Double.parseDouble(affichage.getText());
+                    affichage.setText("");
+                }
+            }
+        });
+
+        moins.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                if(!affichage.getText().isEmpty()){
+                    operation = "-";
+                    total += Double.parseDouble(affichage.getText());
+                    affichage.setText("");
+                }
+            }
+        });
+
+        fois.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                if(!affichage.getText().isEmpty()){
+                    operation = "*";
+                    total += Double.parseDouble(affichage.getText());
+                    affichage.setText("");
+                }
+            }
+        });
+
+        divise.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                if(!affichage.getText().isEmpty()){
+                    operation = "/";
+                    total += Double.parseDouble(affichage.getText());
+                    affichage.setText("");
+                }
+            }
+        });
+
+        egal.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent event) {
+                switch(operation){
+                case "+":
+                    if(!affichage.getText().isEmpty()){
+                        total += Double.parseDouble(affichage.getText());
+                    }
+                    break;
+                case "-":
+                    if(!affichage.getText().isEmpty()){
+                        total -= Double.parseDouble(affichage.getText());
+                    }
+                    break;
+                case "*":
+                    if(!affichage.getText().isEmpty()){
+                        total *= Double.parseDouble(affichage.getText());
+                    }
+                    break;
+                case "/":
+                    if(!affichage.getText().isEmpty()){
+                        total /= Double.parseDouble(affichage.getText());
+                    }
+                    break;
+                }
+
+                affichage.setText(String.valueOf(total));
+            }
+        });
+
     }
 
     public static void main(String[] args) {
