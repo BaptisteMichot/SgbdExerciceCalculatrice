@@ -30,8 +30,8 @@ public class App extends Application {
         affichage.setStyle("-fx-font-size: 35px;");
         affichage.setAlignment(Pos.BASELINE_RIGHT);
         affichage.textProperty().addListener((observable, ancienAffichage, nouvelAffichage) -> {
-            //0 ou plusieurs chiffres suivis de 0 ou 1 point suivi de 0 ou plusieurs chiffres
-            if (!nouvelAffichage.matches("\\d*\\.?\\d*")) { 
+            //0 ou 1 "-" suivi de 0 ou plusieurs chiffres suivis de 0 ou 1 "." suivi de 0 ou plusieurs chiffres
+            if (!nouvelAffichage.matches("\\-?\\d*\\.?\\d*")) { 
                 affichage.setText(ancienAffichage);
             }
         });
