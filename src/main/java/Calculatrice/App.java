@@ -11,7 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
+import java.math.RoundingMode;
 import java.io.IOException;
 import java.math.BigDecimal;
 
@@ -20,6 +20,7 @@ public class App extends Application {
     private static Scene scene;
     private String operation;
     private BigDecimal total = BigDecimal.ZERO;
+    private boolean operationEnCours = false;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -150,10 +151,11 @@ public class App extends Application {
         plus.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                if(!affichage.getText().isEmpty()){
-                    operation = "+";
+                if(!affichage.getText().isEmpty() && !operationEnCours){
                     total = total.add(new BigDecimal(affichage.getText()));
                     affichage.setText("");
+                    operation = "+";
+                    operationEnCours = true;
                 }
             }
         });
@@ -163,10 +165,11 @@ public class App extends Application {
             public void handle(ActionEvent event) {
                 if(affichage.getText().isEmpty()){
                     affichage.setText("-");
-                }else{
-                    operation = "-";
+                }else if(!operationEnCours && !affichage.getText().endsWith("-")){
                     total = total.add(new BigDecimal(affichage.getText()));
                     affichage.setText("");
+                    operation = "-";
+                    operationEnCours = true;
                 }
             }
         });
@@ -174,10 +177,11 @@ public class App extends Application {
         fois.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                if(!affichage.getText().isEmpty()){
-                    operation = "*";
+                if(!affichage.getText().isEmpty() && !operationEnCours){
                     total = total.add(new BigDecimal(affichage.getText()));
                     affichage.setText("");
+                    operation = "*";
+                    operationEnCours = true;
                 }
             }
         });
@@ -185,10 +189,11 @@ public class App extends Application {
         divise.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                if(!affichage.getText().isEmpty()){
-                    operation = "/";
+                if(!affichage.getText().isEmpty() && !operationEnCours){
                     total = total.add(new BigDecimal(affichage.getText()));
                     affichage.setText("");
+                    operation = "/";
+                    operationEnCours = true;
                 }
             }
         });
@@ -196,17 +201,17 @@ public class App extends Application {
         ac.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                //total = 0;
                 total = BigDecimal.ZERO;
-                operation = null;
                 affichage.setText("");
+                operation = null;
+                operationEnCours = false;
             }
         });
 
         egal.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                if(!affichage.getText().isEmpty() && operation != null){
+                if(!affichage.getText().isEmpty() && operation != null && operationEnCours){
 
                     BigDecimal nouveauNombre = new BigDecimal(affichage.getText());
 
@@ -222,16 +227,19 @@ public class App extends Application {
                         break;
                         case "/":
                             if(nouveauNombre.compareTo(BigDecimal.ZERO) != 0){
-                                total = total.divide(nouveauNombre);
+                                total = total.divide(nouveauNombre, 15, RoundingMode.HALF_UP);
                             }else{
                                 return;
                             }
                         break;
                     }
+                }else if(!affichage.getText().isEmpty() && operation == null && !operationEnCours){
+                    total = new BigDecimal(affichage.getText());
                 }
                 affichage.setText(total.toString());
-                operation = null;
                 total = BigDecimal.ZERO;
+                operation = null;
+                operationEnCours = false;
             }
         });
 
