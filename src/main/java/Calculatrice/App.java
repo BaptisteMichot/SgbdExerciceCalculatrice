@@ -160,7 +160,9 @@ public class App extends Application {
         moins.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                if(!affichage.getText().isEmpty()){
+                if(affichage.getText().isEmpty()){
+                    affichage.setText("-");
+                }else{
                     operation = "-";
                     total += Double.parseDouble(affichage.getText());
                     affichage.setText("");
@@ -190,33 +192,44 @@ public class App extends Application {
             }
         });
 
+        ac.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                total = 0;
+                operation = null;
+                affichage.setText("");
+            }
+        });
+
         egal.setOnAction(new EventHandler<ActionEvent>(){
             @Override
             public void handle(ActionEvent event) {
-                switch(operation){
-                case "+":
-                    if(!affichage.getText().isEmpty()){
-                        total += Double.parseDouble(affichage.getText());
-                    }
-                    break;
-                case "-":
-                    if(!affichage.getText().isEmpty()){
-                        total -= Double.parseDouble(affichage.getText());
-                    }
-                    break;
-                case "*":
-                    if(!affichage.getText().isEmpty()){
-                        total *= Double.parseDouble(affichage.getText());
-                    }
-                    break;
-                case "/":
-                    if(!affichage.getText().isEmpty()){
-                        total /= Double.parseDouble(affichage.getText());
-                    }
-                    break;
-                }
+                if(!affichage.getText().isEmpty() && operation != null){
 
+                    double nouveauNombre = Double.parseDouble(affichage.getText());
+
+                    switch(operation){
+                        case "+":
+                            total += nouveauNombre;
+                        break;
+                        case "-":
+                            total -= nouveauNombre;
+                        break;
+                        case "*":
+                            total *= nouveauNombre;
+                        break;
+                        case "/":
+                            if(nouveauNombre != 0){
+                                total /= nouveauNombre;
+                            }else{
+                                return;
+                            }
+                        break;
+                    }
+                }
                 affichage.setText(String.valueOf(total));
+                operation = null;
+                total = 0;
             }
         });
 
