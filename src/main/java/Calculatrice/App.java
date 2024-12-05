@@ -13,12 +13,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 public class App extends Application {
 
     private static Scene scene;
     private String operation;
-    private double total = 0;
+    private BigDecimal total = BigDecimal.ZERO;
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -151,7 +152,7 @@ public class App extends Application {
             public void handle(ActionEvent event) {
                 if(!affichage.getText().isEmpty()){
                     operation = "+";
-                    total += Double.parseDouble(affichage.getText());
+                    total = total.add(new BigDecimal(affichage.getText()));
                     affichage.setText("");
                 }
             }
@@ -164,7 +165,7 @@ public class App extends Application {
                     affichage.setText("-");
                 }else{
                     operation = "-";
-                    total += Double.parseDouble(affichage.getText());
+                    total = total.add(new BigDecimal(affichage.getText()));
                     affichage.setText("");
                 }
             }
@@ -175,7 +176,7 @@ public class App extends Application {
             public void handle(ActionEvent event) {
                 if(!affichage.getText().isEmpty()){
                     operation = "*";
-                    total += Double.parseDouble(affichage.getText());
+                    total = total.add(new BigDecimal(affichage.getText()));
                     affichage.setText("");
                 }
             }
@@ -186,7 +187,7 @@ public class App extends Application {
             public void handle(ActionEvent event) {
                 if(!affichage.getText().isEmpty()){
                     operation = "/";
-                    total += Double.parseDouble(affichage.getText());
+                    total = total.add(new BigDecimal(affichage.getText()));
                     affichage.setText("");
                 }
             }
@@ -195,7 +196,8 @@ public class App extends Application {
         ac.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                total = 0;
+                //total = 0;
+                total = BigDecimal.ZERO;
                 operation = null;
                 affichage.setText("");
             }
@@ -206,30 +208,30 @@ public class App extends Application {
             public void handle(ActionEvent event) {
                 if(!affichage.getText().isEmpty() && operation != null){
 
-                    double nouveauNombre = Double.parseDouble(affichage.getText());
+                    BigDecimal nouveauNombre = new BigDecimal(affichage.getText());
 
                     switch(operation){
                         case "+":
-                            total += nouveauNombre;
+                            total = total.add(nouveauNombre);
                         break;
                         case "-":
-                            total -= nouveauNombre;
+                            total = total.subtract(nouveauNombre);
                         break;
                         case "*":
-                            total *= nouveauNombre;
+                            total = total.multiply(nouveauNombre);
                         break;
                         case "/":
-                            if(nouveauNombre != 0){
-                                total /= nouveauNombre;
+                            if(nouveauNombre.compareTo(BigDecimal.ZERO) != 0){
+                                total = total.divide(nouveauNombre);
                             }else{
                                 return;
                             }
                         break;
                     }
                 }
-                affichage.setText(String.valueOf(total));
+                affichage.setText(total.toString());
                 operation = null;
-                total = 0;
+                total = BigDecimal.ZERO;
             }
         });
 
